@@ -13,7 +13,7 @@ export default function ServiceCard({ title, description, href, price }: Props) 
     <div className="border rounded-xl p-5 hover:shadow-sm transition">
       <div className="flex items-baseline justify-between gap-4">
         <h3 className="text-lg font-semibold">{title}</h3>
-        <span className="text-sm text-gray-600">Desde {price}</span>
+        <span className="text-sm text-gray-600">{price}</span>
       </div>
       <p className="mt-2 text-gray-700">{description}</p>
       <div className="mt-4 flex gap-3">

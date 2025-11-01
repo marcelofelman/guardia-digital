@@ -26,7 +26,7 @@ export default function IniciarSolicitud() {
   return (
     <section className="mx-auto max-w-2xl px-4 py-12">
       <h1 className="text-3xl font-bold">Iniciar solicitud</h1>
-      <p className="mt-2 text-gray-700">Cuéntanos qué necesitas. Te contactaremos en horario laboral (AR/MX).</p>
+      <p className="mt-2 text-gray-700">Cuéntanos qué necesitas. Te contactaremos en horario laboral.</p>
       <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
         <div className="grid gap-1">
           <label className="text-sm">Nombre y apellido</label>
@@ -45,10 +45,11 @@ export default function IniciarSolicitud() {
           <select name="servicio" className="border rounded-lg px-3 py-2">
             <option>Recuperar cuentas hackeadas</option>
             <option>Evaluación de seguridad para PyMEs</option>
-            <option>Antecedentes por fuentes abiertas</option>
+            <option>Investigación de personas y empresas</option>
             <option>Recuperación tras un hackeo</option>
             <option>Refuerzo de seguridad básico</option>
             <option>Simulación de phishing y concientización</option>
+            <option>Servicio a medida</option>
           </select>
         </div>
         <div className="grid gap-1">

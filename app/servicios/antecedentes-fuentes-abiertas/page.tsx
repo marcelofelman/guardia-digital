@@ -2,11 +2,15 @@
 export default function Page() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold">Antecedentes por fuentes abiertas</h1>
+      <h1 className="text-3xl font-bold">Investigación de personas y empresas</h1>
       <div className="mt-4 grid gap-6">
         <div>
           <h2 className="text-xl font-semibold">Qué incluye</h2>
-          <ul className="mt-2 list-disc list-inside text-gray-700"><li>Rastreo en fuentes públicas</li><li>Huella digital y reputación</li><li>Reporte resumido</li></ul>
+          <ul className="mt-2 list-disc list-inside text-gray-700">
+            <li>Recolección e investigación a través de fuentes abiertas.</li>
+            <li>Evaluación de reputación e imagen digital.</li>
+            <li>Reporte resumido con hallazgos.</li>
+          </ul>
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="border rounded-lg p-4"><div className="text-sm text-gray-500">Duración típica</div><div className="font-semibold">3–5 días hábiles</div></div>
