@@ -45,7 +45,7 @@ export default function IniciarSolicitud() {
           <select name="servicio" className="border rounded-lg px-3 py-2">
             <option>Recuperar cuentas hackeadas</option>
             <option>Evaluación de seguridad para PyMEs</option>
-            <option>Antecedentes por fuentes abiertas</option>
+            <option>Investigación de personas y empresas</option>
             <option>Recuperación tras un hackeo</option>
             <option>Refuerzo de seguridad básico</option>
             <option>Simulación de phishing y concientización</option>
