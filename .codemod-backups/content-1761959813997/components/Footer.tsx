@@ -1,0 +1,32 @@
+
+import Link from "next/link";
+
+export default function Footer() {
+  return (
+    <footer className="border-t mt-16">
+      <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-gray-600 grid gap-4 md:grid-cols-3">
+        <div>
+          <div className="font-semibold">Guardia Digital</div>
+          <p className="mt-2">Ciberseguridad accesible para personas y PyMEs en Latinoamérica.</p>
+        </div>
+        <div>
+          <div className="font-semibold">Enlaces</div>
+          <ul className="mt-2 space-y-1">
+            <li><Link href="/servicios" className="hover:text-accent">Servicios</Link></li>
+            <li><Link href="/como-funciona" className="hover:text-accent">Cómo funciona</Link></li>
+            <li><Link href="/iniciar-solicitud" className="hover:text-accent">Iniciar solicitud</Link></li>
+          </ul>
+        </div>
+        <div>
+          <div className="font-semibold">Legal</div>
+          <ul className="mt-2 space-y-1">
+            <li><Link href="/legal/privacidad" className="hover:text-accent">Privacidad</Link></li>
+            <li><Link href="/legal/terminos" className="hover:text-accent">Términos</Link></li>
+            <li><Link href="/legal/tratamiento-datos" className="hover:text-accent">Tratamiento de Datos</Link></li>
+          </ul>
+        </div>
+      </div>
+      <div className="border-t text-center py-4 text-xs text-gray-500">© {new Date().getFullYear()} Guardia Digital</div>
+    </footer>
+  );
+}

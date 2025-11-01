@@ -1,0 +1,31 @@
+
+import Link from "next/link";
+
+export default function Hero() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-16">
+      <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+            Protegemos tu vida digital, una misión a la vez.
+          </h1>
+          <p className="mt-4 text-lg text-gray-700">
+            Empoderamos a una nueva generación de talento en ciberseguridad para proteger la vida digital de Latinoamérica — una misión a la vez.
+          </p>
+          <div className="mt-6 flex gap-3">
+            <Link href="/iniciar-solicitud" className="rounded-lg px-4 py-2 bg-accent text-white hover:opacity-90">Iniciar solicitud</Link>
+            <Link href="/servicios" className="rounded-lg px-4 py-2 border hover:bg-gray-50">Ver servicios</Link>
+          </div>
+        </div>
+        <div className="rounded-2xl border p-6">
+          <ul className="space-y-3">
+            <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-accent" /> Confiable: asignación interna y control de calidad.</li>
+            <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-accent" /> Accesible: precios claros y pagos seguros en USD.</li>
+            <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-accent" /> Rápido: respuesta en horario laboral AR/MX.</li>
+            <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-accent" /> Talento LATAM: profesionales en crecimiento supervisados.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}

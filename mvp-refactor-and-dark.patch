@@ -1,0 +1,361 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MVP Bot <bot@example.com>
+Date: Fri, 31 Oct 2025 12:00:00 -0400
+Subject: [PATCH] Add content refactor + dark theme codemods (no external deps)
+
+---
+ README-PATCH-NOTES.md        | 132 ++++++++++++++++++++++++++++++++
+ scripts/content-refactor.mjs | 210 +++++++++++++++++++++++++++++++++++++++++++
+ scripts/theme-darkify.mjs    | 232 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 574 insertions(+)
+ create mode 100644 README-PATCH-NOTES.md
+ create mode 100755 scripts/content-refactor.mjs
+ create mode 100755 scripts/theme-darkify.mjs
+
+diff --git a/README-PATCH-NOTES.md b/README-PATCH-NOTES.md
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/README-PATCH-NOTES.md
+@@ -0,0 +1,132 @@
++# Patch Notes — Content & Dark Theme Codemods
++
++This patch adds two **safe, dependency-free** scripts to refactor wording and set the site to a **default dark theme**.
++
++## 1) Content refactor (no geographic mentions, friendlier wording)
++
++Run:
++
++```bash
++node scripts/content-refactor.mjs
++```
++
++What it does:
++- Removes mentions of regions like **LATAM / Latinoamérica / América Latina / Argentina / México** (case-insensitive).
++- Replaces **“Hardening”** with **“Refuerzo de seguridad”** (friendlier, plain Spanish).
++- Replaces **“Recuperación post-incidente”** (and close variants) with **“Recuperación tras un hackeo”**.
++- Works across `.ts, .tsx, .js, .jsx, .md, .mdx, .json, .html, .css`.
++- Skips common build/cache/vendor folders.
++
++The script prints a summary of changes and keeps a timestamped backup in `.codemod-backups/` for any file it edits.
++
++> If you prefer a different phrasing for “Hardening” (e.g., “Fortalecimiento”), you can re-run the script after tweaking the replacement string near the top.
++
++## 2) Default dark theme
++
++Run:
++
++```bash
++node scripts/theme-darkify.mjs
++```
++
++What it tries to do (best-effort):
++- Set `darkMode: 'class'` in `tailwind.config.*` (if Tailwind is present).
++- Add `className="dark"` to the `<html>` tag in `app/layout.tsx` or `src/app/layout.tsx` (Next.js App Router).
++- If an existing `className` is found on `<html>`, it appends `dark`.
++- If Tailwind isn’t used or files aren’t found, it prints guidance — no crashes.
++
++> You can keep a theme toggle later; this just sets **dark by default** for the MVP. If you already have a ThemeProvider, this won’t remove it.
++
++## Reverting
++
++If you haven’t committed:
++```bash
++git restore -SW :/
++```
++Otherwise, use your backups in `.codemod-backups/` or `git revert`.
++
++## Notes
++- Both scripts are **idempotent-ish** — re-running them won’t double-apply changes.
++- They only modify files when a change is actually needed.
++- They print exactly what they changed for easy review.
++
+diff --git a/scripts/content-refactor.mjs b/scripts/content-refactor.mjs
+new file mode 100755
+index 0000000..2222222
+--- /dev/null
++++ b/scripts/content-refactor.mjs
+@@ -0,0 +1,210 @@
++#!/usr/bin/env node
++/**
++ * Content refactor codemod (no deps).
++ * - Remove geographic mentions (LATAM, Latinoamérica, América Latina, Argentina, México).
++ * - Replace "Hardening" -> "Refuerzo de seguridad".
++ * - Replace "Recuperación post-incidente" (and variants) -> "Recuperación tras un hackeo".
++ * - Back up changed files into .codemod-backups/
++ */
++
++import fs from 'node:fs';
++import path from 'node:path';
++
++const repoRoot = process.cwd();
++const BACKUP_DIR = path.join(repoRoot, '.codemod-backups', `content-${Date.now()}`);
++fs.mkdirSync(BACKUP_DIR, { recursive: true });
++
++const INCLUDE_EXTS = new Set(['.ts','.tsx','.js','.jsx','.md','.mdx','.json','.html','.css']);
++const EXCLUDE_DIRS = new Set([
++  'node_modules','.git','.next','dist','build','out','.turbo','.vercel','.cache','.nuxt'
++]);
++
++// ---- Replacement rules ----
++const REPLACEMENTS = [
++  // Hardening -> Refuerzo de seguridad
++  { desc: 'Hardening -> Refuerzo de seguridad',
++    pattern: /\bHardening\b/gi,
++    replace: 'Refuerzo de seguridad' },
++
++  // Recuperación post-incidente -> Recuperación tras un hackeo (variants)
++  { desc: 'Recuperación post-incidente -> Recuperación tras un hackeo',
++    pattern: /\bRecuperaci[oó]n\s+post[\s-]?incidente\b/gi,
++    replace: 'Recuperación tras un hackeo' },
++  { desc: 'Recuperación post incidente -> Recuperación tras un hackeo',
++    pattern: /\bRecuperaci[oó]n\s+post\s+incidente\b/gi,
++    replace: 'Recuperación tras un hackeo' },
++  { desc: 'postincidente -> tras un hackeo (rare compound)',
++    pattern: /\bpostincidente\b/gi,
++    replace: 'tras un hackeo' },
++
++  // Remove geography mentions (make them disappear cleanly)
++  { desc: 'Remove LATAM',
++    pattern: /\bLATAM\b/gi,
++    replace: '' },
++  { desc: 'Remove LatAm',
++    pattern: /\bLatAm\b/gi,
++    replace: '' },
++  { desc: 'Remove Latinoamérica',
++    pattern: /\bLatinoam[eé]rica\b/gi,
++    replace: '' },
++  { desc: 'Remove América Latina',
++    pattern: /\bAm[eé]rica\s+Latina\b/gi,
++    replace: '' },
++  { desc: 'Remove Argentina',
++    pattern: /\bArgentina\b/gi,
++    replace: '' },
++  { desc: 'Remove México/Méjico',
++    pattern: /\bM[eé]x(ic)o\b|\bM[eé]jico\b/gi,
++    replace: '' },
++];
++
++const GEO_PARENTHETICALS = [
++  // Remove parenthetical geography like "(en LATAM)" "(Latinoamérica)" etc.
++  /\s*\((?:en\s+)?(?:LATAM|LatAm|Latinoam[eé]rica|Am[eé]rica\s+Latina|Argentina|M[eé]x(ic)o|M[eé]jico)\)\s*/gi
++];
++
++let changedFiles = 0;
++let changeCounts = {};
++
++function walk(dir) {
++  const entries = fs.readdirSync(dir, { withFileTypes: true });
++  for (const e of entries) {
++    if (e.isDirectory()) {
++      if (EXCLUDE_DIRS.has(e.name)) continue;
++      walk(path.join(dir, e.name));
++    } else {
++      const ext = path.extname(e.name);
++      if (!INCLUDE_EXTS.has(ext)) continue;
++      const filePath = path.join(dir, e.name);
++      refactorFile(filePath);
++    }
++  }
++}
++
++function refactorFile(filePath) {
++  let text = fs.readFileSync(filePath, 'utf8');
++  let original = text;
++  let fileChanges = 0;
++
++  // Remove parenthetical geography
++  GEO_PARENTHETICALS.forEach((rx) => {
++    text = text.replace(rx, (m) => {
++      fileChanges++;
++      inc('Remove geo parenthetical');
++      return ' ';
++    });
++  });
++
++  // Simple replacements
++  for (const r of REPLACEMENTS) {
++    const before = text;
++    text = text.replace(r.pattern, (m) => {
++      fileChanges++;
++      inc(r.desc);
++      return r.replace;
++    });
++    if (before !== text && r.desc.includes('Remove') && /\s{2,}/.test(text)) {
++      // collapse double spaces introduced by removals
++      text = text.replace(/\s{2,}/g, ' ');
++    }
++  }
++
++  if (text !== original) {
++    // Backup and write
++    const rel = path.relative(repoRoot, filePath);
++    const backupPath = path.join(BACKUP_DIR, rel);
++    fs.mkdirSync(path.dirname(backupPath), { recursive: true });
++    fs.copyFileSync(filePath, backupPath);
++    fs.writeFileSync(filePath, text, 'utf8');
++    changedFiles++;
++    console.log(`✔ Updated: ${rel} (${fileChanges} changes)`);
++  }
++}
++
++function inc(key) {
++  changeCounts[key] = (changeCounts[key] || 0) + 1;
++}
++
++console.log('▶ Running content refactor…');
++walk(repoRoot);
++console.log('\nSummary:');
++console.log(`  Files changed: ${changedFiles}`);
++Object.entries(changeCounts).forEach(([k, v]) => {
++  console.log(`  ${k}: ${v}`);
++});
++console.log(`\nBackups: ${BACKUP_DIR}`);
++console.log('Done.');
++
+diff --git a/scripts/theme-darkify.mjs b/scripts/theme-darkify.mjs
+new file mode 100755
+index 0000000..3333333
+--- /dev/null
++++ b/scripts/theme-darkify.mjs
+@@ -0,0 +1,232 @@
++#!/usr/bin/env node
++/**
++ * Dark theme codemod (no deps).
++ * - Sets Tailwind darkMode:'class' if tailwind.config.* exists.
++ * - Adds className="dark" to <html> in app/layout.tsx (or src/app/layout.tsx) if present.
++ * - Safe to re-run. Backs up changed files under .codemod-backups/
++ */
++import fs from 'node:fs';
++import path from 'node:path';
++
++const root = process.cwd();
++const BACKUP_DIR = path.join(root, '.codemod-backups', `dark-${Date.now()}`);
++fs.mkdirSync(BACKUP_DIR, { recursive: true });
++
++function backupWrite(file, content) {
++  const rel = path.relative(root, file);
++  const backupPath = path.join(BACKUP_DIR, rel);
++  fs.mkdirSync(path.dirname(backupPath), { recursive: true });
++  if (fs.existsSync(file)) fs.copyFileSync(file, backupPath);
++  fs.writeFileSync(file, content, 'utf8');
++  console.log(`✔ Updated: ${rel}`);
++}
++
++function tryFiles(files) {
++  for (const f of files) {
++    const p = path.join(root, f);
++    if (fs.existsSync(p)) return p;
++  }
++  return null;
++}
++
++// 1) Tailwind: darkMode:'class'
++function patchTailwind() {
++  const config = tryFiles([
++    'tailwind.config.ts',
++    'tailwind.config.js',
++    'tailwind.config.cjs',
++    'tailwind.config.mjs'
++  ]);
++  if (!config) {
++    console.warn('⚠ Tailwind config not found. Skipping Tailwind dark mode.');
++    return;
++  }
++  let src = fs.readFileSync(config, 'utf8');
++
++  // If darkMode already set, replace its value with 'class'
++  if (/darkMode\s*:\s*['"`]media['"`]/.test(src) || /darkMode\s*:\s*['"`]class['"`]/.test(src)) {
++    src = src.replace(/darkMode\s*:\s*['"`](?:media|class)['"`]/, "darkMode: 'class'");
++    backupWrite(config, src);
++    return;
++  }
++
++  // Try to insert darkMode near top-level config export
++  // Match "export default { … }" or "module.exports = { … }"
++  const exportRegexes = [
++    /(export\s+default\s+{)([\s\S]*?)(})/m,
++    /(module\.exports\s*=\s*{)([\s\S]*?)(})/m
++  ];
++  let patched = false;
++  for (const rx of exportRegexes) {
++    if (rx.test(src)) {
++      src = src.replace(rx, (m, a, b, c) => {
++        if (/darkMode\s*:/.test(b)) return m; // already has some darkMode; leave it
++        const insert = `\n  darkMode: 'class',`;
++        return `${a}${insert}${b}${c}`;
++      });
++      patched = true;
++      break;
++    }
++  }
++  if (patched) {
++    backupWrite(config, src);
++  } else {
++    console.warn('⚠ Could not detect Tailwind export shape. Please set darkMode:\'class\' manually.');
++  }
++}
++
++// 2) Next.js App Router: add className="dark" on <html>
++function patchNextLayout() {
++  const layout = tryFiles([
++    'app/layout.tsx',
++    'app/layout.jsx',
++    'src/app/layout.tsx',
++    'src/app/layout.jsx'
++  ]);
++  if (!layout) {
++    console.warn('⚠ app/layout.* not found. Skipping HTML dark class.');
++    return;
++  }
++  let src = fs.readFileSync(layout, 'utf8');
++  const original = src;
++
++  // Try to find the <html ...> opening tag
++  // If it already has className with 'dark', skip.
++  // Cases to handle:
++  // <html lang="es">  -> add className="dark"
++  // <html className="foo"> -> append "dark"
++  // <html class="foo"> (rare in TSX) -> normalize to className
++  const htmlOpenTagRx = /<html([^>]*)>/i;
++  const m = src.match(htmlOpenTagRx);
++  if (!m) {
++    console.warn('⚠ <html> tag not found in layout. Skipping.');
++    return;
++  }
++  const attrs = m[1] || '';
++  let newAttrs = attrs;
++
++  // Normalize class="..." -> className="..."
++  newAttrs = newAttrs.replace(/\bclass="/g, 'className="');
++
++  // If className exists
++  const classNameRx = /\bclassName\s*=\s*["']([^"']*)["']/;
++  if (classNameRx.test(newAttrs)) {
++    newAttrs = newAttrs.replace(classNameRx, (mm, val) => {
++      if (/\bdark\b/.test(val)) return mm; // already has dark
++      return `className="${val} dark"`;
++    });
++  } else {
++    // Add className
++    newAttrs = `${newAttrs} className="dark"`;
++  }
++
++  const newOpenTag = `<html${newAttrs}>`;
++  src = src.replace(htmlOpenTagRx, newOpenTag);
++
++  if (src !== original) {
++    backupWrite(layout, src);
++  } else {
++    console.log('ℹ No change needed in layout (already dark).');
++  }
++}
++
++console.log('▶ Applying default dark theme…');
++patchTailwind();
++patchNextLayout();
++console.log(`Backups: ${BACKUP_DIR}`);
++console.log('Done.');
++
+-- 
+2.42.0
