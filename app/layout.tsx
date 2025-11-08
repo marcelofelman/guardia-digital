@@ -3,11 +3,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Analytics } from "@vercel/analytics/next";
+import VercelAnalytics from "../components/VercelAnalytics";
 
 export const metadata: Metadata = {
-  title: "Guardia Digital | Ciberseguridad accesible para personas y PyMEs",
-  description: "Servicios estandarizados de ciberseguridad: recuperación de cuentas, evaluaciones para PyMEs, Refuerzo de seguridad y más. Pagos en USD con escrow.",
+  title: "Soluciones de ciberseguridad, sin vueltas.",
+  description:
+    "Detectamos, protegemos y resolvemos rápido. Atención directa, resultados claros y un equipo que te habla en tu idioma.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
-        <Analytics />
+        <VercelAnalytics />
       </body>
     </html>
   );
