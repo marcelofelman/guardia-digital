@@ -15,7 +15,7 @@ export default function Page() {
         <div className="grid md:grid-cols-3 gap-4">
           <div className="border rounded-lg p-4"><div className="text-sm text-gray-500">Duración típica</div><div className="font-semibold">3–5 días hábiles</div></div>
           <div className="border rounded-lg p-4"><div className="text-sm text-gray-500">Precio</div><div className="font-semibold">Desde USD 99</div></div>
-          <div className="border rounded-lg p-4"><div className="text-sm text-gray-500">Qué necesitas</div><div className="text-gray-700">Datos del sujeto y finalidad legítima</div></div>
+          <div className="border rounded-lg p-4"><div className="text-sm text-gray-500">Qué necesitas</div><div className="text-gray-700">Datos básicos de la persona o empresa y finalidad legítima</div></div>
         </div>
         <a href="/iniciar-solicitud" className="inline-block rounded-lg px-4 py-2 bg-accent text-white hover:opacity-90 w-fit">Iniciar solicitud</a>
       </div>

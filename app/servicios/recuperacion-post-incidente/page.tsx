@@ -6,7 +6,7 @@ export default function Page() {
       <div className="mt-4 grid gap-6">
         <div>
           <h2 className="text-xl font-semibold">Qué incluye</h2>
-          <ul className="mt-2 list-disc list-inside text-gray-700"><li>Contención inicial</li><li>Guía de recuperación</li><li>Restablecimiento de accesos</li><li>Recomendaciones de Refuerzo de seguridad</li></ul>
+          <ul className="mt-2 list-disc list-inside text-gray-700"><li>Contención inicial</li><li>Guía de recuperación</li><li>Restablecimiento de accesos</li><li>Recomendaciones de refuerzo de seguridad</li></ul>
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="border rounded-lg p-4"><div className="text-sm text-gray-500">Duración típica</div><div className="font-semibold">Contacto en 4h hábiles; acciones iniciales en 24h</div></div>

@@ -6,7 +6,7 @@ export default function Page() {
       <div className="mt-4 grid gap-6">
         <div>
           <h2 className="text-xl font-semibold">Qué incluye</h2>
-          <ul className="mt-2 list-disc list-inside text-gray-700"><li>Checklist de superficies y cuentas críticas</li><li>Revisión cloud/endpoint</li><li>Reporte de hallazgos y plan 30–60 días</li></ul>
+          <ul className="mt-2 list-disc list-inside text-gray-700"><li>Identificación de vulnerabilidades</li><li>Revisión ambientes cloud y dispositivos</li><li>Reporte de hallazgos y plan de remediación</li></ul>
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="border rounded-lg p-4"><div className="text-sm text-gray-500">Duración típica</div><div className="font-semibold">Entrega en 5–10 días hábiles</div></div>
