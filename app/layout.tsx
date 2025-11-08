@@ -6,8 +6,9 @@ import Footer from "../components/Footer";
 import VercelAnalytics from "../components/VercelAnalytics";
 
 export const metadata: Metadata = {
-  title: "Guardia Digital | Ciberseguridad accesible para personas y PyMEs",
-  description: "Servicios estandarizados de ciberseguridad: recuperación de cuentas, evaluaciones para PyMEs, Refuerzo de seguridad y más. Pagos en USD con escrow.",
+  title: "Soluciones de ciberseguridad, sin vueltas.",
+  description:
+    "Detectamos, protegemos y resolvemos rápido. Atención directa, resultados claros y un equipo que te habla en tu idioma.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
