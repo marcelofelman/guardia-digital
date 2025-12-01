@@ -1,0 +1,64 @@
+/* app/styles/tokens.css */
+/* Placeholder for design tokens (Tailwind/shadcn overrides) */
+
+:root {
+  /* Primary Palette */
+  --color-primary-50: #e0f7fa;
+  --color-primary-100: #b2ebf2;
+  --color-primary-200: #80deea;
+  --color-primary-300: #4dd0e1;
+  --color-primary-400: #26c6da;
+  --color-primary-500: #00bcd4;
+  --color-primary-600: #00acc1;
+  --color-primary-700: #0097a7;
+  --color-primary-800: #00838f;
+  --color-primary-900: #006064;
+
+  /* Accent Palette */
+  --color-accent-a100: #84ffff;
+  --color-accent-a200: #18ffff;
+  --color-accent-a400: #00e5ff;
+  --color-accent-a700: #00b8d4;
+
+  /* Typography */
+  --font-family-sans: 'Inter', sans-serif;
+  --font-family-serif: 'Merriweather', serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.5;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Border Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+/* Example of how to use these with Tailwind CSS */
+/* You would typically extend your tailwind.config.js to use these */
+/*
+@layer base {
+  :root {
+    --background: var(--color-primary-50);
+    --foreground: var(--color-primary-900);
+    --primary: var(--color-primary-500);
+    --primary-foreground: var(--color-primary-50);
+    --accent: var(--color-accent-a400);
+    --accent-foreground: var(--color-primary-900);
+  }
+
+  .dark {
+    --background: var(--color-primary-900);
+    --foreground: var(--color-primary-50);
+    --primary: var(--color-primary-400);
+    --primary-foreground: var(--color-primary-900);
+    --accent: var(--color-accent-a200);
+    --accent-foreground: var(--color-primary-900);
+  }
+}
+*/
